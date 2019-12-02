@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Day01b {
     public static void main(String[] args) throws FileNotFoundException {
-        Scanner fileReader = new Scanner(new File("src/inputDay1.txt"));
+        Scanner fileReader = new Scanner(new File("src/_inputDay1.txt"));
         int totalFuel = 0;
 
         while(fileReader.hasNextLine()) {
