@@ -1,4 +1,4 @@
-package Day03a;
+package Day03b;
 
 public class Line {
     private int startX;
@@ -33,19 +33,35 @@ public class Line {
         return point;
     }
 
-    private int minX() {
+    public int minX() {
         return Math.min(this.startX, this.endX);
     }
 
-    private int maxX() {
+    public int maxX() {
         return Math.max(this.startX, this.endX);
     }
 
-    private int minY() {
+    public int minY() {
         return Math.min(this.startY, this.endY);
     }
 
-    private int maxY() {
+    public int maxY() {
         return Math.max(this.startY, this.endY);
+    }
+
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getStartY() {
+        return startY;
+    }
+
+    public int getEndX() {
+        return endX;
+    }
+
+    public int getEndY() {
+        return endY;
     }
 }
