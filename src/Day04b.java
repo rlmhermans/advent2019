@@ -14,7 +14,7 @@ public class Day04b {
             HashMap<Integer, Integer> numbers = new HashMap<>();
 
             for (int j = 0; j < 6; j++) {
-                int current = Integer.parseInt("" + code.charAt(j));
+                int current = Integer.parseInt(Character.toString(code.charAt(j)));
                 if(numbers.containsKey(current)) {
                     numbers.replace(current, numbers.get(current) + 1);
                 } else {
