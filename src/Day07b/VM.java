@@ -1,6 +1,4 @@
-package Day07a;
-
-import java.util.Scanner;
+package Day07b;
 
 public class VM {
     private int phaseSetting;
@@ -8,18 +6,18 @@ public class VM {
     private int input;
     private int output;
     boolean first = true;
+    boolean halted = false;
+    int start = 0;
 
-    public VM(int phaseSetting, int[] program, int input) {
+    public VM(int phaseSetting, int[] program) {
         this.phaseSetting = phaseSetting;
         this.program = program;
-        this.input = input;
     }
 
     public int runProgram() {
-        Scanner inputReader = new Scanner(System.in);
         int raise;
 
-        for (int i = 0; i < program.length; i += raise) {
+        for (int i = start; i < program.length; i += raise) {
             raise = 1;
 
             String code = String.valueOf(program[i]);
@@ -58,8 +56,10 @@ public class VM {
             if (code.substring(3).equals("04")) {
                 int firstValue = code.charAt(2) == '0' ? program[program[i + 1]] : program[i + 1];
                 output = firstValue;
+                start = i + 2;
 
-                raise = 2;
+
+                break;
             }
 
             if (code.substring(3).equals("05")) {
@@ -109,13 +109,19 @@ public class VM {
             }
 
             if (program[i] == 99) {
+                halted = true;
                 break;
             }
         }
+
         return output;
     }
 
     public void setInput(int input) {
         this.input = input;
+    }
+
+    public boolean isHalted() {
+        return halted;
     }
 }

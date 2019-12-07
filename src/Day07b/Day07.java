@@ -1,5 +1,6 @@
-package Day07a;
+package Day07b;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,25 +10,40 @@ public class Day07 {
     public static void main(String[] args) {
         int highestOutput = 0;
         ArrayList<Integer> combination = new ArrayList<>(5);
-        combination.add(0);
-        combination.add(1);
-        combination.add(2);
-        combination.add(3);
-        combination.add(4);
+        combination.add(9);
+        combination.add(8);
+        combination.add(7);
+        combination.add(6);
+        combination.add(5);
 
         for (int i = 0; i < 100; i++) {
             int input = 0;
-            int output = 0;
-
+            int output;
             Collections.shuffle(combination);
+
+            ArrayList<VM> amplifiers = new ArrayList<>();
             for (int setting : combination) {
-                output = new VM(setting, inputProgram.clone(), input).runProgram();
+                amplifiers.add(new VM(setting, inputProgram.clone()));
+            }
+
+            for (int j = 0; j < 5; j++) {
+                VM amplifier = amplifiers.get(j);
+                amplifier.setInput(input);
+                output = amplifier.runProgram();
+
+                if (j == 4) {
+                    if (amplifier.isHalted()) {
+                        if (output > highestOutput) {
+                            highestOutput = output;
+                        }
+                    } else {
+                        j = -1;
+                    }
+                }
+
                 input = output;
             }
 
-            if (output > highestOutput) {
-                highestOutput = output;
-            }
         }
 
         System.out.println(highestOutput);
