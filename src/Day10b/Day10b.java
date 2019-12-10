@@ -1,9 +1,10 @@
-package Day10a;
+package Day10b;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 
-public class Day10a {
+public class Day10b {
     private static final String asteroidField = ".###..#......###..#...##.#..#.##..###..#...#.##.#.#.##.#..##.#.###.##.#..#...####.#.##..##..#.###.#.####.##.#######..#######..##..##.#.###.##.#...##.##.####..###....####.####.##########.########.#...##.####..#.#..#.#.#.#.##.###.###..#.#..##...#..#.####..###.#.#...###....###..###..#.###..###.#.###.#...###.##.#.##.#...#..##......#.#.##..#...#.#.###.##.#..##...#..#.#.####..###..##.##..##.######.###.####....######..###.#####.#.#.#.#####.##.#.###.###.##.##..##.##.#..#..#..#.####.#.#..#.#.#.##.##########..######.##......#.#.####.";
 
     public static void main(String[] args) {
@@ -19,16 +20,22 @@ public class Day10a {
         }
 
         int most = 0;
+        HashMap<Float, Asteroid> mostAngleSet = null;
 
-        for(Asteroid a : asteroids) {
-            HashSet<Float> asteroidAngles = new HashSet<>();
-            for(Asteroid b : asteroids) {
-                if(a != b) asteroidAngles.add(a.getAngle(b));
+        for (Asteroid a : asteroids) {
+            HashMap<Float, Asteroid> asteroidAngles = new HashMap<>();
+            for (Asteroid b : asteroids) {
+                if (a != b) asteroidAngles.putIfAbsent(a.getAngle(b), b);
             }
 
-            if(most < asteroidAngles.size()) most = asteroidAngles.size();
+            if (most < asteroidAngles.size()) {
+                most = asteroidAngles.size();
+                mostAngleSet = asteroidAngles;
+            }
         }
 
-        System.out.println(most);
+        ArrayList<Float> sortedList = new ArrayList(mostAngleSet.keySet());
+        Collections.sort(sortedList);
+        System.out.println(mostAngleSet.get(sortedList.get(199)));
     }
 }
