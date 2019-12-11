@@ -6,16 +6,21 @@ import java.util.Scanner;
 
 public class VM {
     private BigInteger[] program;
-    int relativeBase = 0;
+    private int relativeBase = 0;
+    private PaintRobot robot;
+    private boolean painted;
 
-    public VM(BigInteger[] program) {
+
+    public VM(BigInteger[] program, PaintRobot robot) {
         this.program = program;
+        this.robot = robot;
     }
 
     public void runProgram() {
         int raise;
 
         for (int i = 0; i < program.length; i += raise) {
+            System.out.println("Index: " + i);
             raise = 1;
 
             String code = String.valueOf(program[i]);
@@ -24,33 +29,52 @@ public class VM {
             }
 
             if (code.substring(3).equals("01")) {
+                System.out.println("ADDITION");
                 setValue(code, i, 3, getValue(code, i, 1).add(getValue(code, i, 2)));
 
                 raise = 4;
             }
 
             if (code.substring(3).equals("02")) {
+                System.out.println("MULTIPLICATION");
                 setValue(code, i, 3, getValue(code, i, 1).multiply(getValue(code, i, 2)));
 
                 raise = 4;
             }
 
             if (code.substring(3).equals("03")) {
-                Scanner inputReader = new Scanner(System.in);
-                System.out.print("Run what program?");
-                String input = inputReader.nextLine();
-                setValue(code, i, 1, new BigInteger(input));
+                System.out.println("INPUT");
+                int input = robot.scanColor();
+                setValue(code, i, 1, new BigInteger(String.valueOf(input)));
 
                 raise = 2;
             }
 
             if (code.substring(3).equals("04")) {
-                System.out.println(getValue(code, i, 1));
+                System.out.println("OUTPUT");
+                int value = getValue(code, i, 1).intValue();
+
+                if (!painted) {
+                    if (value == 0) {
+                        robot.paintBlack();
+                    } else {
+                        robot.paintWhite();
+                    }
+                    painted = true;
+                } else {
+                    if (value == 0) {
+                        robot.moveLeft();
+                    } else {
+                        robot.moveRight();
+                    }
+                    painted = false;
+                }
 
                 raise = 2;
             }
 
             if (code.substring(3).equals("05")) {
+                System.out.println("CONDITIONALJUMP>0");
                 BigInteger firstValue = getValue(code, i, 1);
                 BigInteger secondValue = getValue(code, i, 2);
                 if (firstValue.compareTo(new BigInteger("0")) == 1) {
@@ -62,6 +86,7 @@ public class VM {
             }
 
             if (code.substring(3).equals("06")) {
+                System.out.println("CONDITIONALJUMP==0");
                 BigInteger firstValue = getValue(code, i, 1);
                 BigInteger secondValue = getValue(code, i, 2);
                 if (firstValue.equals(new BigInteger("0"))) {
@@ -73,6 +98,7 @@ public class VM {
             }
 
             if (code.substring(3).equals("07")) {
+                System.out.println("COMPARISON<");
                 BigInteger firstValue = getValue(code, i, 1);
                 BigInteger secondValue = getValue(code, i, 2);
                 if (firstValue.compareTo(secondValue) == -1) {
@@ -85,6 +111,7 @@ public class VM {
             }
 
             if (code.substring(3).equals("08")) {
+                System.out.println("COMPARISON==");
                 BigInteger firstValue = getValue(code, i, 1);
                 BigInteger secondValue = getValue(code, i, 2);
                 if (firstValue.compareTo(secondValue) == 0) {
@@ -97,12 +124,14 @@ public class VM {
             }
 
             if (code.substring(3).equals("09")) {
+                System.out.println("SETRELATIVEBASE");
                 relativeBase += getValue(code, i, 1).intValue();
 
                 raise = 2;
             }
 
             if (code.substring(3).equals("99")) {
+                System.out.println("EXIT");
                 break;
             }
         }
@@ -113,13 +142,26 @@ public class VM {
 
         switch (code.charAt(3 - parameterOffset)) {
             case '0':
-                value = program[program[codeIndex + parameterOffset].intValue()];
+                int index = program[codeIndex + parameterOffset].intValue();
+                if (index >= program.length) {
+                    value = new BigInteger(String.valueOf(0));
+                } else {
+                    value = program[program[codeIndex + parameterOffset].intValue()];
+                }
+                System.out.println("GET (mode 0): " + value);
                 break;
             case '1':
                 value = program[codeIndex + parameterOffset];
+                System.out.println("GET (mode 1): " + value);
                 break;
             case '2':
-                value = program[program[codeIndex + parameterOffset].intValue() + relativeBase];
+                index = program[codeIndex + parameterOffset].intValue() + relativeBase;
+                if (index >= program.length) {
+                    value = new BigInteger(String.valueOf(0));
+                } else {
+                    value = program[program[codeIndex + parameterOffset].intValue() + relativeBase];
+                }
+                System.out.println("GET (mode 2): " + value);
                 break;
         }
 
@@ -132,14 +174,16 @@ public class VM {
         switch (code.charAt(3 - parameterOffset)) {
             case '0':
                 index = program[codeIndex + parameterOffset].intValue();
+                System.out.println("SET (mode 0): " + newValue);
                 break;
             case '2':
                 index = program[codeIndex + parameterOffset].intValue() + relativeBase;
+                System.out.println("SET (mode 2): " + newValue);
                 break;
         }
 
         int growth = index - program.length + 1;
-        if(growth > 0) program = Arrays.copyOf(program, program.length + growth);
+        if (growth > 0) program = Arrays.copyOf(program, program.length + growth);
         program[index] = newValue;
     }
 }
