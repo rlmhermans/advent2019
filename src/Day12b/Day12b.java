@@ -30,6 +30,11 @@ public class Day12b {
         }
 
         String startPosition = "";
+
+        for (Moon current : moons) {
+            startPosition += current;
+        }
+
         boolean same = false;
         int counter = 0;
 
@@ -54,8 +59,6 @@ public class Day12b {
             if (position.equals(startPosition)) {
                 same = true;
             }
-
-            if(startPosition.isEmpty()) startPosition = position;
         }
 
         return counter;
