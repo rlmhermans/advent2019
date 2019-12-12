@@ -1,7 +1,5 @@
 package Day12a;
 
-import java.math.BigInteger;
-
 public class Moon {
     private int positionX;
     private int positionY;
