@@ -2,14 +2,13 @@ package Day12a;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Day12a {
     public static void main(String[] args) throws FileNotFoundException {
         Scanner fileReader = new Scanner(new File("src/Day12a/MoonInput.txt"));
-        ArrayList<Moon> moons = new ArrayList<Moon>();
+        ArrayList<Moon> moons = new ArrayList<>();
         while(fileReader.hasNextLine()) {
             String line = fileReader.nextLine();
             line = line. substring(1, line.length()-1);
