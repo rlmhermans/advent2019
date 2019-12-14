@@ -1,15 +1,14 @@
 package Day13b;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 public class VM {
-    private BigInteger[] program;
+    private long[] program;
     private int relativeBase = 0;
     private Arcade arcade;
 
 
-    public VM(BigInteger[] program, Arcade arcade) {
+    public VM(long[] program, Arcade arcade) {
         this.program = program;
         this.arcade = arcade;
     }
@@ -26,36 +25,36 @@ public class VM {
             }
 
             if (code.substring(3).equals("01")) {
-                setValue(code, i, 3, getValue(code, i, 1).add(getValue(code, i, 2)));
+                setValue(code, i, 3, getValue(code, i, 1) + getValue(code, i, 2));
 
                 raise = 4;
             }
 
             if (code.substring(3).equals("02")) {
-                setValue(code, i, 3, getValue(code, i, 1).multiply(getValue(code, i, 2)));
+                setValue(code, i, 3, getValue(code, i, 1) * getValue(code, i, 2));
 
                 raise = 4;
             }
 
             if (code.substring(3).equals("03")) {
                 int input = arcade.readStick();
-                setValue(code, i, 1, new BigInteger(String.valueOf(input)));
+                setValue(code, i, 1, input);
 
                 raise = 2;
             }
 
             if (code.substring(3).equals("04")) {
-                int value = getValue(code, i, 1).intValue();
+                int value = (int)getValue(code, i, 1);
                 arcade.input(value);
 
                 raise = 2;
             }
 
             if (code.substring(3).equals("05")) {
-                BigInteger firstValue = getValue(code, i, 1);
-                BigInteger secondValue = getValue(code, i, 2);
-                if (firstValue.compareTo(new BigInteger("0")) == 1) {
-                    i = secondValue.intValue();
+                long firstValue = getValue(code, i, 1);
+                long secondValue = getValue(code, i, 2);
+                if (firstValue != 0) {
+                    i = (int)secondValue;
                     raise = 0;
                 } else {
                     raise = 3;
@@ -63,10 +62,10 @@ public class VM {
             }
 
             if (code.substring(3).equals("06")) {
-                BigInteger firstValue = getValue(code, i, 1);
-                BigInteger secondValue = getValue(code, i, 2);
-                if (firstValue.equals(new BigInteger("0"))) {
-                    i = secondValue.intValue();
+                long firstValue = getValue(code, i, 1);
+                long secondValue = getValue(code, i, 2);
+                if (firstValue == 0) {
+                    i = (int)secondValue;
                     raise = 0;
                 } else {
                     raise = 3;
@@ -74,31 +73,31 @@ public class VM {
             }
 
             if (code.substring(3).equals("07")) {
-                BigInteger firstValue = getValue(code, i, 1);
-                BigInteger secondValue = getValue(code, i, 2);
-                if (firstValue.compareTo(secondValue) == -1) {
-                    setValue(code, i, 3, new BigInteger("1"));
+                long firstValue = getValue(code, i, 1);
+                long secondValue = getValue(code, i, 2);
+                if (firstValue < secondValue) {
+                    setValue(code, i, 3, 1);
                 } else {
-                    setValue(code, i, 3, new BigInteger("0"));
+                    setValue(code, i, 3, 0);
                 }
 
                 raise = 4;
             }
 
             if (code.substring(3).equals("08")) {
-                BigInteger firstValue = getValue(code, i, 1);
-                BigInteger secondValue = getValue(code, i, 2);
-                if (firstValue.compareTo(secondValue) == 0) {
-                    setValue(code, i, 3, new BigInteger("1"));
+                long firstValue = getValue(code, i, 1);
+                long secondValue = getValue(code, i, 2);
+                if (firstValue == secondValue) {
+                    setValue(code, i, 3, 1);
                 } else {
-                    setValue(code, i, 3, new BigInteger("0"));
+                    setValue(code, i, 3, 0);
                 }
 
                 raise = 4;
             }
 
             if (code.substring(3).equals("09")) {
-                relativeBase += getValue(code, i, 1).intValue();
+                relativeBase += getValue(code, i, 1);
 
                 raise = 2;
             }
@@ -109,27 +108,27 @@ public class VM {
         }
     }
 
-    public BigInteger getValue(String code, int codeIndex, int parameterOffset) {
-        BigInteger value = new BigInteger("0");
+    public long getValue(String code, int codeIndex, int parameterOffset) {
+        long value = 0;
 
         switch (code.charAt(3 - parameterOffset)) {
             case '0':
-                int index = program[codeIndex + parameterOffset].intValue();
+                long index = program[codeIndex + parameterOffset];
                 if (index >= program.length) {
-                    value = new BigInteger(String.valueOf(0));
+                    value = 0;
                 } else {
-                    value = program[program[codeIndex + parameterOffset].intValue()];
+                    value = program[(int) program[codeIndex + parameterOffset]];
                 }
                 break;
             case '1':
                 value = program[codeIndex + parameterOffset];
                 break;
             case '2':
-                index = program[codeIndex + parameterOffset].intValue() + relativeBase;
+                index = program[codeIndex + parameterOffset] + relativeBase;
                 if (index >= program.length) {
-                    value = new BigInteger(String.valueOf(0));
+                    value = 0;
                 } else {
-                    value = program[program[codeIndex + parameterOffset].intValue() + relativeBase];
+                    value = program[(int) program[codeIndex + parameterOffset] + relativeBase];
                 }
                 break;
         }
@@ -137,15 +136,15 @@ public class VM {
         return value;
     }
 
-    public void setValue(String code, int codeIndex, int parameterOffset, BigInteger newValue) {
+    public void setValue(String code, int codeIndex, int parameterOffset, long newValue) {
         int index = 0;
 
         switch (code.charAt(3 - parameterOffset)) {
             case '0':
-                index = program[codeIndex + parameterOffset].intValue();
+                index = (int) program[codeIndex + parameterOffset];
                 break;
             case '2':
-                index = program[codeIndex + parameterOffset].intValue() + relativeBase;
+                index = (int) program[codeIndex + parameterOffset] + relativeBase;
                 break;
         }
 
